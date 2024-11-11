@@ -44,7 +44,7 @@ paths:
         '201':
           description: transaction created
         '422':
-          description: invalid request
+          description: insufficient balance
       requestBody:
         content:
           application/json:

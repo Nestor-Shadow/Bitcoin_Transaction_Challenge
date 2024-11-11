@@ -5,7 +5,6 @@ module Api
       before_action :set_user, only: [:create, :user_transactions]
       before_action :set_transaction, only: [:show]
 
-
       def user_transactions
         transactions = @user.transactions
         return render_empty_list if transactions.empty?
@@ -26,22 +25,22 @@ module Api
 
       def create
         result = transaction_service
-        render json: { success: result[:success], transaction: result[:transaction] },
-               status: :created
-      rescue ActiveRecord::RecordInvalid => e
-        render json: { error: e.record.errors.first.message }, status: :unprocessable_entity
+
+        return render json: { error: result[:error] }, status: :unprocessable_entity if result[:error]
+
+        render json: { success: result[:success], transaction: result[:transaction] }, status: :created
       end
 
       private
 
       def render_empty_list
-        render json: { empty: "No se han realizado transacciones"}
+        render json: { empty: "No se han realizado transacciones" }
       end
 
       def set_transaction
         @transaction = Transaction.find(params[:id])
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Transaccion no encontrada'}, status: :not_found
+        render json: { error: 'Transaccion no encontrada' }, status: :not_found
       end
 
       def set_user

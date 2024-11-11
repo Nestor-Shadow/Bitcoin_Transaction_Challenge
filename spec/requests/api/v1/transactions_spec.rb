@@ -22,7 +22,7 @@ RSpec.describe 'Transactions API', type: :request do
       response '201', 'transaction created' do
         let(:transaction) { { user_id: user.id, currency_sent: 'USD', currency_received: 'BTC', amount_sent: 100.0 } }
         run_test! do
-          expect(json['success']).to eq('Transacción completada')
+          expect(json['success']).to eq('Transaccion completada')
         end
       end
 
@@ -30,6 +30,13 @@ RSpec.describe 'Transactions API', type: :request do
         let(:transaction) { { user_id: user.id, currency_sent: 'USD', currency_received: 'BTC', amount_sent: 0.0 } }
         run_test! do
           expect(json['error']).to eq('Amount sent must be greater than 0')
+        end
+      end
+
+      response '422', 'insufficient balance' do
+        let(:transaction) { { user_id: user.id, currency_sent: 'USD', currency_received: 'BTC', amount_sent: 2000.0 } }
+        run_test! do
+          expect(json['error']).to eq('Saldo insuficiente de USD')
         end
       end
     end

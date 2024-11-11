@@ -80,7 +80,6 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  <<: *default
-  database: bitcoin_challenge_api_production
-  username: bitcoin_challenge_api
-  password: <%= ENV['BITCOIN_CHALLENGE_API_DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>
+  pool: 5
+  timeout: 5000

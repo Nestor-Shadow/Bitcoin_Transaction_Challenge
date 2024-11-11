@@ -13,4 +13,6 @@ Rails.application.routes.draw do
       post 'transactions', to: 'transactions#create'
     end
   end
+
+  root to: redirect('/api-docs')
 end

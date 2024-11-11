@@ -1,4 +1,3 @@
-# app/services/transaction_service.rb
 class TransactionService
   def initialize(user, currency_sent, currency_received, amount_sent)
     @user = user
@@ -21,7 +20,9 @@ class TransactionService
 
     amount_received = calculate_amount_received
     transaction = create_transaction(amount_received)
-    return transaction_success(transaction) if transaction.persisted?
+    return transaction if transaction[:error]
+
+    transaction_success(transaction)
   end
 
   def buying?
@@ -41,8 +42,12 @@ class TransactionService
   end
 
   def create_transaction(amount_received)
-    @user.transactions.create!(amount_received:, amount_sent: @amount_sent, currency_received: @currency_received,
-                               currency_sent: @currency_sent, timestamp: Time.now)
+    transaction = @user.transactions.build(amount_received: amount_received, amount_sent: @amount_sent,
+                                           currency_received: @currency_received, currency_sent: @currency_sent,
+                                           timestamp: Time.now)
+    return transaction if transaction.valid?
+
+    { error: transaction.errors.first.message }
   end
 
   def fetch_btc_price
@@ -64,7 +69,9 @@ class TransactionService
 
     usd_amount_received = calculate_usd_received
     transaction = create_transaction(usd_amount_received)
-    return transaction_success(transaction) if transaction.persisted?
+    return transaction if transaction[:error]
+
+    transaction_success(transaction)
   end
 
   def selling?
@@ -73,15 +80,15 @@ class TransactionService
 
   def transaction_success(transaction)
     if buying?
-      @user.update!(balance: @user.balance - transaction[:amount_sent],
-                    btc_balance: @user.btc_balance + transaction[:amount_received])
+      @user.update!(balance: @user.balance - transaction.amount_sent,
+                    btc_balance: @user.btc_balance + transaction.amount_received)
     end
 
     if selling?
       @user.update!(btc_balance: @user.btc_balance - @amount_sent,
-                    balance: @user.balance + transaction[:amount_received])
+                    balance: @user.balance + transaction.amount_received)
     end
 
-    { success: 'Transacción completada', transaction: }
+    { success: 'Transaccion completada', transaction: transaction }
   end
 end
