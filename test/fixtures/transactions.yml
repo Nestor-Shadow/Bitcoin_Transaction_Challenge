@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  amount_sent: 9.99
+  amount_received: 9.99
+  currency_sent: MyString
+  currency_received: MyString
+  timestamp: 2024-11-07 19:34:56
+
+two:
+  user: two
+  amount_sent: 9.99
+  amount_received: 9.99
+  currency_sent: MyString
+  currency_received: MyString
+  timestamp: 2024-11-07 19:34:56

@@ -1,0 +1,103 @@
+---
+openapi: 3.0.1
+info:
+  title: Transactions API
+  version: v1
+paths:
+  "/api/v1/bitcoin_price":
+    get:
+      summary: Fetch Bitcoin Price in USD
+      tags:
+      - Bitcoin Price
+      responses:
+        '200':
+          description: returns Bitcoin price in USD
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bitcoin_usd_value:
+                    type: string
+                    example: 50,000.00 USD
+                required:
+                - bitcoin_usd_value
+        '422':
+          description: error fetching Bitcoin price
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No se pudo obtener el precio de Bitcoin
+                required:
+                - error
+  "/api/v1/transactions":
+    post:
+      summary: Creates a transaction
+      tags:
+      - Transactions
+      parameters: []
+      responses:
+        '201':
+          description: transaction created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                currency_sent:
+                  type: string
+                  example: USD
+                currency_received:
+                  type: string
+                  example: BTC
+                amount_sent:
+                  type: number
+                  example: 100.0
+              required:
+              - user_id
+              - currency_sent
+              - currency_received
+              - amount_sent
+  "/api/v1/transactions/users/{user_id}":
+    get:
+      summary: Fetches all transactions for a specific user
+      tags:
+      - Transactions
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: transactions found
+        '404':
+          description: user not found
+  "/api/v1/transactions/{id}":
+    get:
+      summary: Fetches a specific transaction
+      tags:
+      - Transactions
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: transaction found
+        '404':
+          description: transaction not found
+components:
+  schemas: {}
